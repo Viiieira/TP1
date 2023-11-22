@@ -8,7 +8,7 @@ class CSVReader:
         self._delimiter = delimiter
 
     def loop(self):
-        with open(self._path, 'r') as file:
+        with open(self._path, 'r', encoding='utf-8') as file:
             for row in DictReader(file, delimiter=self._delimiter):
                 yield row
         file.close()

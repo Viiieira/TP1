@@ -4,8 +4,8 @@ import xml.etree.ElementTree as ET
 
 from csv_reader import CSVReader
 from entities.country import Country
-from entities.team import Team
-from entities.player import Player
+from entities.wine import Wine
+from entities.province import Province
 
 
 class CSVtoXMLConverter:
@@ -14,46 +14,44 @@ class CSVtoXMLConverter:
         self._reader = CSVReader(path)
 
     def to_xml(self):
+
         # read countries
         countries = self._reader.read_entities(
-            attr="nationality",
-            builder=lambda row: Country(row["nationality"])
+            attr="country",
+            builder=lambda row: Country(row["country"])
         )
 
-        # read teams
-        teams = self._reader.read_entities(
-            attr="Current Club",
-            builder=lambda row: Team(row["Current Club"])
+         # read countries
+        provinces = self._reader.read_entities(
+            attr="province",
+            builder=lambda row: Province(row["province"])
         )
 
         # read players
 
-        def after_creating_player(player, row):
-            # add the player to the appropriate team
-            teams[row["Current Club"]].add_player(player)
+        def after_creating_wine(wine, row):
+            # add the wine to the appropriate province
+            countries[row["country"]].add_wine(wine)
 
         self._reader.read_entities(
-            attr="full_name",
-            builder=lambda row: Player(
-                name=row["full_name"],
-                age=row["age"],
-                country=countries[row["nationality"]]
+            attr="designation",
+            builder=lambda row: Wine(
+                name=row["designation"],
+                points=row["points"],
+                price=row["price"],
+                province=provinces[row["province"]]
             ),
-            after_create=after_creating_player
+            after_create=after_creating_wine
         )
 
         # generate the final xml
         root_el = ET.Element("Football")
 
-        teams_el = ET.Element("Teams")
-        for team in teams.values():
-            teams_el.append(team.to_xml())
-
         countries_el = ET.Element("Countries")
         for country in countries.values():
             countries_el.append(country.to_xml())
 
-        root_el.append(teams_el)
+
         root_el.append(countries_el)
 
         return root_el
