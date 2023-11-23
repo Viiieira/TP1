@@ -45,7 +45,7 @@ class CSVtoXMLConverter:
         )
 
         # generate the final xml
-        root_el = ET.Element("Football")
+        root_el = ET.Element("WineReviews")
 
         countries_el = ET.Element("Countries")
         for country in countries.values():

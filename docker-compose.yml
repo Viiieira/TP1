@@ -6,7 +6,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5432:5432"
+      - "5470:5470"
 
   rpc-server:
     container_name: is-rpc-server
@@ -45,3 +45,4 @@ services:
 
 volumes:
   postgres_data:
+  dataset_data:

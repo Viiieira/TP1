@@ -4,14 +4,14 @@ connection = None
 cursor = None
 
 try:
-    connection = psycopg2.connect(user="is", password="is", host="is-db", port="5432", database="is")
+    connection = psycopg2.connect(user="postgres", password="123", host="is-db", port="5470", database="is")
 
     cursor = connection.cursor()
-    cursor.execute("SELECT * FROM teachers")
+    cursor.execute("SELECT * FROM imported_documents")
 
-    print("Teachers list:")
-    for teacher in cursor:
-        print(f" > {teacher[0]}, from {teacher[1]}")
+    print("XML Documents list:")
+    for document in cursor:
+        print(f" > {document[0]}, from {document[1]}")
 
 except (Exception, psycopg2.Error) as error:
     print("Failed to fetch data", error)

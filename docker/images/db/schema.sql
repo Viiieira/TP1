@@ -3,7 +3,8 @@ CREATE TABLE public.imported_documents (
 	file_name       VARCHAR(250) UNIQUE NOT NULL,
 	xml             XML NOT NULL,
 	created_on      TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
+	updated_on      TIMESTAMP NOT NULL DEFAULT NOW(),
+	deleted         BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE public.teachers (
