@@ -6,7 +6,7 @@ def insert_xml(xml_filename, xml_str):
     cursor = None
 
     try:
-        connection = psycopg2.connect(user="is", password="is", host="is-db", port="5432", database="is")
+        connection = psycopg2.connect(user="postgres", password="123", host="is-db", port="5432", database="is")
         cursor = connection.cursor()
         sql = "INSERT INTO imported_documents (file_name, xml) VALUES (%s, %s)"
         cursor.execute(sql, (xml_filename, xml_str))

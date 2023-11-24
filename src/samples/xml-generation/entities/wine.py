@@ -17,7 +17,7 @@ class Wine:
         el.set("name", self._name)
         el.set("points", self._points)
         el.set("price", self._price)
-        el.set("province_ref", str(self._province.get_id()))
+        el.set("province", self._province)
         return el
 
     def __str__(self):
