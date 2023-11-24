@@ -42,12 +42,6 @@ services:
       - "./docker/volumes/data:/data"
     depends_on:
       - rpc-server
-  xml_to_db:
-    container_name: is-xml-to-db
-    build: docker/images/python
-    volumes:
-      - "./src/samples/xml_to_db:/app"
-      - "./docker/volumes/data:/data"
 
 volumes:
   postgres_data:
