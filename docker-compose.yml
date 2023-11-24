@@ -6,7 +6,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     ports:
-      - "5470:5470"
+      - "5432:5432"
 
   rpc-server:
     container_name: is-rpc-server
@@ -42,6 +42,12 @@ services:
       - "./docker/volumes/data:/data"
     depends_on:
       - rpc-server
+  xml_to_db:
+    container_name: is-xml-to-db
+    build: docker/images/python
+    volumes:
+      - "./src/samples/xml_to_db:/app"
+      - "./docker/volumes/data:/data"
 
 volumes:
   postgres_data:

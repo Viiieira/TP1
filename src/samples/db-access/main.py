@@ -4,7 +4,7 @@ connection = None
 cursor = None
 
 try:
-    connection = psycopg2.connect(user="postgres", password="123", host="is-db", port="5470", database="is")
+    connection = psycopg2.connect(user="is", password="is", host="is-db", port="5432", database="is")
 
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM imported_documents")
