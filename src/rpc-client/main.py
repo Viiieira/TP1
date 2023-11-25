@@ -12,23 +12,44 @@ print(f" > {server.string_length(string)}")
 
 while True:
     print("\nSelect one of the following options:")
-    print("\t1 - List All Countries")
-    print("\t2 - List All Wines of a Country")
-    print("\t3 - List Average Points of Wines of a Province")
+    print("\nFile Management:")
+    print("\t1 - Import a XML file to the Database")
+    print("\t2 - List XML Files in the Database")
+    print("\t3 - Delete a XML File from the Database")
+    print("\nData Views:")
+    print("\t4 - List All Countries")
+    print("\t5 - List All Wines of a Country")
+    print("\t6 - List Average Points of Wines of a Province")
+    print("\t7 - List Average Points of Wines of a Province")
     print("\t0 -Exit")
 
     choice = input("Enter your choice: ")
 
     if(choice == '1'):
+        input_id = input("Import a XML File to the Database: ")
+        print(input_id)
+        query = "UPDATE public.imported_documents SET deleted = TRUE WHERE id = {input_id};"
+        print(f" > {server.execute_query(query)}")
+    elif(choice == '2'):
+        query = "SELECT * FROM public.imported_documents;"
+        results = server.execute_query(query)
+
+    elif(choice == '3'):
+        input_id = input("Enter the ID to be deleted: ")
+        print(input_id)
+        query = "UPDATE public.imported_documents SET deleted = TRUE WHERE id = {input_id};"
+        print(f" > {server.execute_query(query)}")
+
+    elif(choice == '4'):
         query = "SELECT DISTINCT xpath('/WineReviews/Countries/Country/@name', xml)::text AS country_name FROM public.imported_documents;"
         print(f" > {server.execute_query(query)}")
 
-    elif(choice == '2'):
+    elif(choice == '5'):
         country_name = input("Enter the country name (e.g.,Portugal):")
         query = "SELECT xpath('/WineReviews/Countries/Country[@name=\"{country_name}\"]/Wines/Wine/@name', xml)::text AS wine_name FROM public.imported_documents;"
         print(f" > {server.execute_query(query)}")
 
-    elif(choice == '3'):
+    elif(choice == '6'):
         operator = input("Enter the operator (e.g., >, <, >=, <=, =): ")
         points = input("Enter the points: ")
     
@@ -39,7 +60,7 @@ while True:
         print(f"query: {query}")
         print(f" > {server.execute_query(query)}")
     
-    elif choice == '4':
+    elif choice == '7':
         country_name = input("Enter the country name (e.g., Portugal): ")
         
         # Choose the field for grouping (e.g., points)

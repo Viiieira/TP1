@@ -10,6 +10,7 @@ def execute_query(query):
         cursor = connection.cursor()
 
         cursor.execute(query)
+        connection.commit()
 
         result = cursor.fetchall()
 
