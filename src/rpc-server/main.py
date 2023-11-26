@@ -2,8 +2,6 @@ import signal, sys
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
 
-from functions.string_length import string_length
-from functions.string_reverse import string_reverse
 from functions.execute_query import execute_query
 
 
@@ -31,8 +29,6 @@ with SimpleXMLRPCServer(('0.0.0.0', 9000), allow_none=True, requestHandler=Reque
     signal.signal(signal.SIGINT, signal_handler)
 
     # register both functions
-    server.register_function(string_reverse)
-    server.register_function(string_length)
     server.register_function(execute_query)
 
     # start the server

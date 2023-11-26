@@ -274,11 +274,6 @@ while True:
             except Exception as e:
                 print(f"Error executing query: {e}")
 
-
-
-
-
-
         case 0:
             print("Exiting...")
             break
