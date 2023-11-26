@@ -35,7 +35,6 @@ with SimpleXMLRPCServer(('0.0.0.0', 9000), allow_none=True, requestHandler=Reque
     server.register_function(string_length)
     server.register_function(execute_query)
 
-
     # start the server
     print("Starting the RPC Server...")
     server.serve_forever()
