@@ -11,7 +11,7 @@ while True:
     print("\t3 - Delete a XML File from the Database")
     print("\nData Views:")
     print("\t4 - List All Countries")
-    print("\t5 - List All Wines of a Country")
+    print("\t5 - List All Wines that match an input amount of points")
     print("\t6 - List Average Points of Wines of a Province")
     print("\t7 - List Average Points of Wines of a Province")
     print("\t0 - Exit")
@@ -112,20 +112,54 @@ while True:
                 print(f"Error executing query: {e}")
 
         case 5:
-            country_name = input("Enter the country name (e.g.,Portugal):")
-            query = "SELECT xpath('/WineReviews/Countries/Country[@name=\"{country_name}\"]/Wines/Wine/@name', xml)::text AS wine_name FROM public.imported_documents;"
-            print(f" > {server.execute_query(query)}")
-
-        case 6:
             operator = input("Enter the operator (e.g., >, <, >=, <=, =): ")
             points = input("Enter the points: ")
 
             # Construct the XPath query based on input
-            query = f"SELECT xpath('/WineReviews/Countries/Country[Wines/Wine[@points {operator} {points}]]/Wines/Wine/@name', xml)::text AS wine_name, " \
-                    f"xpath('/WineReviews/Countries/Country[Wines/Wine[@points {operator} {points}]]/Wines/Wine/@price', xml)::text AS wine_price " \
+            query = f"SELECT xpath('/WineReviews/Countries/Country[Wines/Wine[@points {operator} {points}]]/Wines/Wine/@name', xml)::text AS wine_name " \
                     f"FROM public.imported_documents;"
-            print(f"query: {query}")
-            print(f" > {server.execute_query(query)}")
+
+            try:
+                results = server.execute_query(query)
+
+                if len(results) > 0:
+                    # Extracting the wines names from the result
+                    names_str = results[0][0]
+
+                    # Removing curly braces and quotes
+                    names_string = names_str.replace('{', '').replace('}', '').replace('"', '')
+
+                    # Splitting the string into a list of countries
+                    names_list = names_string.split(',')
+
+                    # Iterating over the list and printing each country
+                    for name in names_list:
+                        print(f"> {name.strip()}")
+                else:
+                    print("No wines match the criteria.")
+
+            except Exception as e:
+                print(f"Error executing query: {e}")
+
+        case 6:
+            try:
+                # Construct the XPath query to get all tasters ordered by name
+                query = "SELECT xpath('/WineReviews/Tasters/Taster/@taster_name', xml)::text AS taster_name " \
+                        "FROM public.imported_documents ORDER BY taster_name;"
+
+                results = server.execute_query(query)
+
+                if len(results) > 0:
+                    # Extracting and printing the taster names
+                    taster_names = [taster_data[0].strip('"') for taster_data in results]
+                    for taster_name in taster_names:
+                        print(f"> {taster_name}")
+                else:
+                    print("No tasters found.")
+
+            except Exception as e:
+                print(f"Error executing query: {e}")
+
 
         case 7:
             country_name = input("Enter the country name (e.g., Portugal): ")

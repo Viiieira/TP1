@@ -6,7 +6,7 @@ def execute_query(query, params=None):
     result = []
 
     try:
-        connection = psycopg2.connect(user="is", password="is", host="is-db", port="5432", database="is")
+        connection = psycopg2.connect(user="postgres", password="123", host="is-db", port="5432", database="is")
         cursor = connection.cursor()
 
         # In case the query has params, execute bind the values to the query
@@ -26,9 +26,3 @@ def execute_query(query, params=None):
             connection.close()
 
     return result
-
-query = "SELECT * FROM imported_documents"
-results = execute_query(query)
-
-for row in results:
-    print(row)
