@@ -1,4 +1,3 @@
-import ast
 import xmlrpc.client
 
 print("Connecting to server...")

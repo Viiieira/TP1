@@ -49,3 +49,6 @@ Thumbs.db
 *.wmv
 
 *.pyc
+src/samples/xml-generation/main.py
+src/samples/db-access/main.py
+docker/images/db/Dockerfile
