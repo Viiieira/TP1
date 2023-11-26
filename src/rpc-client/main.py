@@ -1,3 +1,4 @@
+import ast
 import xmlrpc.client
 
 print("Connecting to server...")
@@ -82,8 +83,31 @@ while True:
             print(f"Error executing query: {e}")
 
     elif choice == 4:
-        query = "SELECT DISTINCT xpath('/WineReviews/Countries/Country/@name', xml)::text AS country_name FROM public.imported_documents;"
-        print(f" > {server.execute_query(query)}")
+        try:
+            query = "SELECT DISTINCT xpath('/WineReviews/Countries/Country/@name', xml)::text AS country_name FROM public.imported_documents;"
+
+            results = server.execute_query(query)
+
+            # print(f"Results: {results}")
+
+            if len(results) > 0:
+                # Extracting the country names from the result
+                countries_str = results[0][0]
+
+                # Removing curly braces and quotes
+                country_string = countries_str.replace('{', '').replace('}', '').replace('"', '')
+
+                # Splitting the string into a list of countries
+                countries_list = country_string.split(',')
+
+                # Iterating over the list and printing each country
+                for country in countries_list:
+                    print(f"> {country.strip()}")
+            else:
+                print("There are no countries.")
+
+        except Exception as e:
+            print(f"Error executing query: {e}")
 
     elif choice == 5:
         country_name = input("Enter the country name (e.g.,Portugal):")
