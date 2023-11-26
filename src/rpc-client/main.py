@@ -86,30 +86,32 @@ while True:
 
         case 4:
             try:
-                query = "SELECT DISTINCT xpath('/WineReviews/Countries/Country/@name', xml)::text AS country_name FROM public.imported_documents;"
+                country = input("Enter a country (e.g., Spain): ")
+
+                query = f"SELECT xpath('/WineReviews/Countries/Country[@name=\"{country}\"]/Wines/Wine/@name', xml) AS wine_names FROM public.imported_documents;"
 
                 results = server.execute_query(query)
 
-                # print(f"Results: {results}")
-
                 if len(results) > 0:
-                    # Extracting the country names from the result
-                    countries_str = results[0][0]
+                    # Extracting the wine names from the result
+                    wines_str = results[0][0]
 
-                    # Removing curly braces and quotes
-                    country_string = countries_str.replace('{', '').replace('}', '').replace('"', '')
+                    # Handling the case when there are multiple wine names
+                    if wines_str:
+                        wines_list = wines_str.split(',')
 
-                    # Splitting the string into a list of countries
-                    countries_list = country_string.split(',')
-
-                    # Iterating over the list and printing each country
-                    for country in countries_list:
-                        print(f"> {country.strip()}")
+                        # Iterating over the list and printing each wine name
+                        for wine in wines_list:
+                            print(f"> {wine.strip()}")
+                    else:
+                        print(f"There are no wines for the country: {country}")
                 else:
-                    print("There are no countries.")
+                    print(f"There are no wines for the country: {country}")
 
             except Exception as e:
                 print(f"Error executing query: {e}")
+
+
 
         case 5:
             operator = input("Enter the operator (e.g., >, <, >=, <=, =): ")
@@ -162,15 +164,37 @@ while True:
 
 
         case 7:
-            country_name = input("Enter the country name (e.g., Portugal): ")
+            try:
+                # Construct the XPath query to get all wineries grouped by province
+                query = """
+                        SELECT 
+                            unnest(xpath('/WineReviews/Wineries/Winery/@winery', xml))::text AS winery_name,
+                            unnest(xpath('/WineReviews/Wineries/Winery/@province', xml))::text AS winery_province
+                        FROM public.imported_documents
+                        ORDER BY winery_province, winery_name;
+                        """
 
-            # Choose the field for grouping (e.g., points)
-            group_field = input("Enter the field for grouping (e.g., points): ")
+                results = server.execute_query(query)
 
-            # Construct the XPath query based on input
-            query = f"SELECT xpath('/WineReviews/Countries/Country[@name=\"{country_name}\"]/Wines/Wine/@{group_field}', xml)::text AS group_field, " \
-                    f"xpath('/WineReviews/Countries/Country[@name=\"{country_name}\"]/Wines/Wine/@name', xml)::text AS wine_name " \
-                    f"FROM public.imported_documents GROUP BY group_field;"
+                if len(results) > 0:
+                    # Extracting and printing the wineries grouped by province
+                    current_province = None
+                    for winery_data in results:
+                        winery_name = winery_data[0].strip('"')
+                        province = winery_data[1].strip('"')
+
+                        # Print province header when it changes
+                        if province != current_province:
+                            print(f"Province: {province}")
+                            current_province = province
+
+                        print(f"> {winery_name}")
+                else:
+                    print("No wineries found.")
+
+            except Exception as e:
+                print(f"Error executing query: {e}")
+
 
         case 0:
             print("Exiting...")
