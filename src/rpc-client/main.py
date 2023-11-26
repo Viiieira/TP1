@@ -51,8 +51,6 @@ while True:
                     except Exception as e:
                         print(f"An error occurred: {e}")
 
-                    # print(f"XML File content: {xml_string}")
-
                     # Update the record if the file already exists
                     if len(check_query) > 0:
                         update_query = "UPDATE public.imported_documents SET xml= %s, updated_on = NOW() WHERE file_name = %s"
@@ -80,20 +78,23 @@ while True:
 
                 if results:
                     # Assuming all values are in the first (and only) row
-                    row = results[0]
+                    # row = results[0]
 
-                    for column, value in zip(["File", "Created On", "Updated On", "Deleted"], row):
-                        if column in ["Created On", "Updated On"]:
-                            # Convert the value to string and format
-                            formatted_value = str(value).replace("T", " ").replace("-", "/")
-                            # Switch the position of the day and the month
-                            formatted_value = (
-                                        formatted_value[6:8] + "/" + formatted_value[4:6] + "/" + formatted_value[0:4]
-                                        + f" {formatted_value[9:]}")
-                        else:
-                            formatted_value = str(value)
+                    for row in results:
+                        print()
+                        for column, value in zip(["File", "Created On", "Updated On", "Deleted"], row):
+                            if column in ["Created On", "Updated On"]:
+                                # Convert the value to string and format
+                                formatted_value = str(value).replace("T", " ").replace("-", "/")
+                                # Switch the position of the day and the month
+                                formatted_value = (
+                                            formatted_value[6:8] + "/" + formatted_value[4:6] + "/" + formatted_value[0:4]
+                                            + f" {formatted_value[9:]}")
+                            else:
+                                formatted_value = str(value)
 
-                        print(f"{column}: {formatted_value}")
+                            print(f"{column}: {formatted_value}")
+
 
                 else:
                     print("No results found.")
