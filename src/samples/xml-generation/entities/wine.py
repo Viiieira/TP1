@@ -8,7 +8,7 @@ import xml.dom.minidom as md
 
 class Wine:
 
-    def __init__(self, name, points, price, province, variety):
+    def __init__(self, name, points, price, province, variety, taster, winery):
         Wine.counter += 1
         self._id = Wine.counter
         self._name = name
@@ -16,6 +16,8 @@ class Wine:
         self._price = price
         self._province = province
         self._variety = variety
+        self._taster = taster
+        self._winery = winery
 
     def to_xml(self):
         el = ET.Element("Wine")
@@ -25,6 +27,9 @@ class Wine:
         el.set("price", self._price)
         el.set("variety", self._variety)
         el.set("province", self._province)
+        el.set("taster_ref", str(self._taster.get_id()))
+        el.set("winery_ref", str(self._winery.get_id()))
+
         return el
 
     def __str__(self):

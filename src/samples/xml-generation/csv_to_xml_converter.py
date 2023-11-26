@@ -44,7 +44,9 @@ class CSVtoXMLConverter:
                 points=row["points"],
                 price=row["price"],
                 variety=row["variety"],
-                province=row["province"]
+                province=row["province"],
+                taster=tasters[row["taster_name"]],
+                winery=wineries[row["winery"]]
             ),
             after_create=after_creating_wine
         )

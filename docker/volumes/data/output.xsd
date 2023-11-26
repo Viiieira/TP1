@@ -1,0 +1,71 @@
+ <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="WineReviews">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Countries">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="Country">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="Wines">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element maxOccurs="unbounded" name="Wine">
+                                                        <xs:complexType>
+                                                            <xs:sequence></xs:sequence>
+                                                            <xs:attribute name="id" type="xs:string"/>
+                                                            <xs:attribute name="name" type="xs:string"/>
+                                                            <xs:attribute name="points" type="xs:string"/>
+                                                            <xs:attribute name="price" type="xs:string"/>
+                                                            <xs:attribute name="variety" type="xs:string"/>
+                                                            <xs:attribute name="province" type="xs:string"/>
+                                                            <xs:attribute name="taster_ref" type="xs:string"/>
+                                                            <xs:attribute name="winery_ref" type="xs:string"/>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="id" type="xs:string"/>
+                                    <xs:attribute name="name" type="xs:string"/>
+                                    <xs:attribute name="latitude" type="xs:string"/>
+                                    <xs:attribute name="longitude" type="xs:string"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Wineries">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="Winery">
+                                <xs:complexType>
+                                    <xs:sequence></xs:sequence>
+                                    <xs:attribute name="id" type="xs:string"/>
+                                    <xs:attribute name="winery" type="xs:string"/>
+                                    <xs:attribute name="province" type="xs:string"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="Tasters">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element maxOccurs="unbounded" name="Taster">
+                                <xs:complexType>
+                                    <xs:sequence></xs:sequence>
+                                    <xs:attribute name="id" type="xs:string"/>
+                                    <xs:attribute name="taster_name" type="xs:string"/>
+                                    <xs:attribute name="taster_twitter_handle" type="xs:string"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
