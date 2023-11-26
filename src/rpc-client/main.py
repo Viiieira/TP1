@@ -1,4 +1,5 @@
 import xmlrpc.client
+import os
 
 print("Connecting to server...")
 server = xmlrpc.client.ServerProxy('http://is-rpc-server:9000')
@@ -21,11 +22,52 @@ while True:
     match choice:
         case 1:
             try:
-                input_id = int(input("Import a XML File to the Database: "))
-                print(input_id)
+                folder_path = "/data"
 
-                query = f"UPDATE public.imported_documents SET deleted = TRUE WHERE id = %s;"
-                print(f" > {server.execute_query(query, (input_id,))}")
+                # Get the list of files in the folder
+                file_list = os.listdir(folder_path)
+
+                # Filter and print only the XML files
+                xml_files = [file for file in file_list if file.endswith('.xml')]
+                for xml_file in xml_files:
+                    print(f"> {xml_file}")
+
+                # Ask the user which one he wants to import
+                selected_xml_file = input("> Which file do you want to import? ")
+
+                # Check if the file exists
+                if os.path.exists(folder_path+'/'+selected_xml_file):
+                    # If the file exists:
+                    query = "SELECT file_name FROM public.imported_documents WHERE file_name = %s"
+                    check_query = server.execute_query(query, (selected_xml_file,))
+
+                    # Open the XML file and put the content of the file into a string
+                    try:
+                        with open(folder_path + '/' + selected_xml_file, "r") as file:
+                            xml_string = file.read()
+                    except FileNotFoundError:
+                        print(f"The file '{file} does not exist'")
+                    except Exception as e:
+                        print(f"An error occurred: {e}")
+
+                    # print(f"XML File content: {xml_string}")
+
+                    # Update the record if the file already exists
+                    if len(check_query) > 0:
+                        update_query = "UPDATE public.imported_documents SET xml= %s, updated_on = NOW() WHERE file_name = %s"
+                        update_result = server.execute_query(update_query, (xml_string, selected_xml_file))
+
+                        print(f"The file {selected_xml_file} has been updated!")
+                    # Insert a new record if the file didn't previously exist
+                    else:
+                        insert_query = "INSERT INTO public.imported_documents (file_name, xml) VALUES(%s, %s)"
+                        insert_result = server.execute_query(insert_query, (selected_xml_file, xml_string))
+
+                        print(f"The file {selected_xml_file} has been successfully inserted into the database!")
+
+                else:
+                    print(f"The file '{folder_path+'/'+selected_xml_file}' doesn't exist. Try again.")
+
             except Exception as e:
                 print(f"> Error executing query: {e}")
 

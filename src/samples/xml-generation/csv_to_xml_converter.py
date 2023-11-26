@@ -1,4 +1,3 @@
-import csv
 import xml.dom.minidom as md
 import xml.etree.ElementTree as ET
 
