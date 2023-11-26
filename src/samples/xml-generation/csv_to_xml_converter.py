@@ -5,8 +5,8 @@ import xml.etree.ElementTree as ET
 from csv_reader import CSVReader
 from entities.country import Country
 from entities.wine import Wine
-from entities.province import Province
-
+from entities.taster import Taster
+from entities.winery import Winery
 
 class CSVtoXMLConverter:
 
@@ -21,13 +21,17 @@ class CSVtoXMLConverter:
             builder=lambda row: Country(row["country"])
         )
 
-         # read countries
-        provinces = self._reader.read_entities(
-            attr="province",
-            builder=lambda row: Province(row["province"])
+        # read tasters
+        tasters = self._reader.read_entities(
+            attr="taster_name",
+            builder=lambda row: Taster(row["taster_name"], row["taster_twitter_handle"])
         )
 
-        # read players
+        # read wineries
+        wineries = self._reader.read_entities(
+            attr="winery",
+            builder=lambda row: Winery(row["winery"], row["province"])
+        )
 
         def after_creating_wine(wine, row):
             # add the wine to the appropriate province
@@ -39,6 +43,7 @@ class CSVtoXMLConverter:
                 name=row["designation"],
                 points=row["points"],
                 price=row["price"],
+                variety=row["variety"],
                 province=row["province"]
             ),
             after_create=after_creating_wine
@@ -51,8 +56,18 @@ class CSVtoXMLConverter:
         for country in countries.values():
             countries_el.append(country.to_xml())
 
+        tasters_el = ET.Element("Tasters")
+        for taster in tasters.values():
+            tasters_el.append(taster.to_xml())
+
+        wineries_el = ET.Element("Wineries")
+        for winery in wineries.values():
+            wineries_el.append(winery.to_xml())
+
 
         root_el.append(countries_el)
+        root_el.append(wineries_el)
+        root_el.append(tasters_el)
 
         return root_el
 
