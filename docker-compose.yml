@@ -24,6 +24,9 @@ services:
       - "./docker/volumes/data:/data"
     depends_on:
       - rpc-server
+    command: python -u /app/main.py
+    stdin_open: true
+    tty: true
 
   sample-db-access:
     container_name: is-db-access
