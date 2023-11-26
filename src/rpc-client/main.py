@@ -10,10 +10,11 @@ while True:
     print("\t2 - List XML Files in the Database")
     print("\t3 - Delete a XML File from the Database")
     print("\nData Views:")
-    print("\t4 - List All Countries")
+    print("\t4 - List All Wines belonging to a country")
     print("\t5 - List All Wines that match an input amount of points")
-    print("\t6 - List Average Points of Wines of a Province")
-    print("\t7 - List Average Points of Wines of a Province")
+    print("\t6 - List Wineries grouped by Province")
+    print("\t7 - List Wineries ordered by Name ")
+    print("\t8 - List Average Points of Wines of a Province")
     print("\t0 - Exit")
 
     choice = int(input("Enter your choice: "))
@@ -111,8 +112,6 @@ while True:
             except Exception as e:
                 print(f"Error executing query: {e}")
 
-
-
         case 5:
             operator = input("Enter the operator (e.g., >, <, >=, <=, =): ")
             points = input("Enter the points: ")
@@ -145,33 +144,13 @@ while True:
 
         case 6:
             try:
-                # Construct the XPath query to get all tasters ordered by name
-                query = "SELECT xpath('/WineReviews/Tasters/Taster/@taster_name', xml)::text AS taster_name " \
-                        "FROM public.imported_documents ORDER BY taster_name;"
-
-                results = server.execute_query(query)
-
-                if len(results) > 0:
-                    # Extracting and printing the taster names
-                    taster_names = [taster_data[0].strip('"') for taster_data in results]
-                    for taster_name in taster_names:
-                        print(f"> {taster_name}")
-                else:
-                    print("No tasters found.")
-
-            except Exception as e:
-                print(f"Error executing query: {e}")
-
-
-        case 7:
-            try:
                 # Construct the XPath query to get all wineries grouped by province
                 query = """
                         SELECT 
                             unnest(xpath('/WineReviews/Wineries/Winery/@winery', xml))::text AS winery_name,
-                            unnest(xpath('/WineReviews/Wineries/Winery/@province', xml))::text AS winery_province
+                            unnest(xpath('/WineReviews/Wineries/Winery/@province', xml))::text AS province
                         FROM public.imported_documents
-                        ORDER BY winery_province, winery_name;
+                        ORDER BY province, winery_name;
                         """
 
                 results = server.execute_query(query)
@@ -188,12 +167,73 @@ while True:
                             print(f"Province: {province}")
                             current_province = province
 
-                        print(f"> {winery_name}")
+                        print(f"> Winery Name: {winery_name}")
                 else:
                     print("No wineries found.")
 
             except Exception as e:
                 print(f"Error executing query: {e}")
+
+
+        case 7:
+            try:
+                # Construct the XPath query to get all wineries ordered by name
+                query = """
+                        SELECT 
+                            unnest(xpath('/WineReviews/Wineries/Winery/@winery', xml))::text AS winery_name
+                        FROM public.imported_documents
+                        ORDER BY winery_name;
+                        """
+
+                results = server.execute_query(query)
+
+                if len(results) > 0:
+                    # Extracting and printing the wineries ordered by name
+                    for winery_data in results:
+                        winery_name = winery_data[0].strip('"')
+                        print(f"> Winery Name: {winery_name}")
+                else:
+                    print("No wineries found.")
+
+            except Exception as e:
+                print(f"Error executing query: {e}")
+
+        case 8:
+            try:
+                country = input("Enter a country (e.g., Italy): ")
+
+                # Construct the XPath query to get wines from the input country and their respective tasters
+                query = f"""
+                        SELECT 
+                            unnest(xpath('/WineReviews/Countries/Country[@name="{country}"]/Wines/Wine/@name', xml))::text AS wine_name,
+                            unnest(xpath('/WineReviews/Countries/Country[@name="{country}"]/Wines/Wine/@taster_ref', xml))::text AS taster_ref,
+                            xpath('/WineReviews/Tasters/Taster[@id=unnest(xpath('/WineReviews/Countries/Country[@name="{country}"]/Wines/Wine/@taster_ref', xml))::text)]/@taster_name', xml)::text AS taster_name,
+                            xpath('/WineReviews/Tasters/Taster[@id=unnest(xpath('/WineReviews/Countries/Country[@name="{country}"]/Wines/Wine/@taster_ref', xml))::text)]/@taster_twitter_handle', xml)::text AS taster_twitter_handle
+                        FROM public.imported_documents
+                        WHERE xpath('/WineReviews/Countries/Country/@name', xml) = '{country}';
+                        """
+
+                results = server.execute_query(query)
+
+                if len(results) > 0:
+                    # Extracting and printing the wines and their respective tasters
+                    for wine_data in results:
+                        wine_name = wine_data[0].strip('"')
+                        taster_ref = wine_data[1].strip('"')
+                        taster_name = wine_data[2].strip('"')
+                        taster_twitter_handle = wine_data[3].strip('"')
+
+                        print(f"> Wine Name: {wine_name}")
+                        print(f"  Taster Name: {taster_name}, Taster Twitter Handle: {taster_twitter_handle}")
+                else:
+                    print(f"No wines found for the country: {country}")
+
+            except Exception as e:
+                print(f"Error executing query: {e}")
+
+
+
+
 
 
         case 0:
